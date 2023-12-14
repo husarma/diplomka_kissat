@@ -394,59 +394,6 @@ std::string WithoutCrossing::get_name() {
 	return "WithoutCrossing";
 }
 
-class CompareWithoutCrossingAtSameTimes {
-public:
-	std::pair<size_t, size_t> finish;
-	std::vector<std::vector<std::vector<size_t>>>* dep_used_number_of_vertex = nullptr;
-	std::vector<std::vector<std::pair<size_t, std::pair<size_t, size_t>>>>* dep_temp_map = nullptr;
-
-	CompareWithoutCrossingAtSameTimes() {
-		dep_used_number_of_vertex = nullptr;
-		dep_temp_map = nullptr;
-	}
-
-	CompareWithoutCrossingAtSameTimes(std::pair<size_t, size_t> finish, std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex, std::vector<std::vector<std::pair<size_t, std::pair<size_t, size_t>>>>& temp_map) :
-		finish(finish),
-		dep_used_number_of_vertex(&used_number_of_vertex),
-		dep_temp_map(&temp_map)
-	{}
-
-	bool operator()(std::pair<size_t, size_t> above, std::pair<size_t, size_t> below) const {
-		std::vector<std::vector<std::pair<size_t, std::pair<size_t, size_t>>>>& temp_map_reference = *dep_temp_map;
-		std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex_reference = *dep_used_number_of_vertex;
-
-		size_t below_g = temp_map_reference[below.first][below.second].first;
-		size_t below_h = abs((int)below.first - (int)finish.first) + abs((int)below.second - (int)finish.second);
-		size_t below_f = below_g + below_h;
-
-		std::vector<size_t> below_used_in_times_vec = used_number_of_vertex_reference[below.first][below.second];
-		size_t below_used_times = std::count(below_used_in_times_vec.begin(), below_used_in_times_vec.end(), below_g);
-
-		size_t above_g = temp_map_reference[above.first][above.second].first;
-		size_t above_h = abs((int)above.first - (int)finish.first) + abs((int)above.second - (int)finish.second);
-		size_t above_f = above_g + above_h;
-
-		std::vector<size_t> above_used_in_times_vec = used_number_of_vertex_reference[above.first][above.second];
-		size_t above_used_times = std::count(above_used_in_times_vec.begin(), above_used_in_times_vec.end(), above_g);
-
-		if (below_f < above_f) {
-			return true;
-		}
-		if (below_f > above_f) {
-			return false;
-		}
-		//f() of both are equal
-		if (below_used_times < above_used_times) {
-			return true;
-		}
-		if (below_used_times > above_used_times) {
-			return false;
-		}
-		//they are equal in everything
-		return false;
-	}
-};
-
 /** Computes the shortest path in graph for one agent.
 *
 * Uses A* algorithm.
