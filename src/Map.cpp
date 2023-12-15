@@ -91,7 +91,7 @@ std::string Map::load_map(std::string custom_map_file_name) {
 		}
 	}
 
-	original_number_of_vertices = vertex_number;
+	original_number_of_vertices = vertex_number - 1;
 
 	map_file.close();
 

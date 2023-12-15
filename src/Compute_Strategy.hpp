@@ -25,27 +25,27 @@ public:
 	void set_path_finder(std::unique_ptr<PathFinderI> p);
 
 	virtual ~ComputeStrategyI() {}
-	virtual std::string run_tests(size_t time_limit=300000) = 0;
+	virtual std::string run_tests(size_t time_limit=60000) = 0;
 };
 
 //////////////////////////////////////// Kissat usage ////////////////////////////////////////
 
 /** Concrete implementation of search strategy for finding an solution.*/
 class Baseline : public ComputeStrategyI {
-	std::string run_tests(size_t time_limit = 300000) override;
+	std::string run_tests(size_t time_limit=60000) override;
 };
 
 /** Concrete implementation of search strategy for finding an solution.*/
 class MakespanAdd : public ComputeStrategyI {
-	std::string run_tests(size_t time_limit = 300000) override;
+	std::string run_tests(size_t time_limit=60000) override;
 };
 
 /** Concrete implementation of search strategy for finding an solution.*/
 class PruningCut : public ComputeStrategyI {
-	std::string run_tests(size_t time_limit = 300000) override;
+	std::string run_tests(size_t time_limit=60000) override;
 };
 
 /** Concrete implementation of search strategy for finding an solution.*/
 class Combined : public ComputeStrategyI {
-	std::string run_tests(size_t time_limit = 300000) override;
+	std::string run_tests(size_t time_limit=60000) override;
 };

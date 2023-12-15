@@ -66,7 +66,7 @@ std::string Baseline::run_tests(size_t time_limit) {
 		mapa.set_agents_file(agents_paths[i]);
 		std::string result = "OK";
 
-		auto started = std::chrono::high_resolution_clock::now();
+		std::chrono::time_point<std::chrono::high_resolution_clock> started;
 		long long preprocess_time_total = 0;
 		long long solver_time_total = 0;
 
@@ -74,7 +74,7 @@ std::string Baseline::run_tests(size_t time_limit) {
 
 			if (result == "OK") {
 
-				auto started = std::chrono::high_resolution_clock::now();
+				started = std::chrono::high_resolution_clock::now();
 				preprocess_time_total = 0;
 				solver_time_total = 0;
 
@@ -176,7 +176,7 @@ std::string MakespanAdd::run_tests(size_t time_limit) {
 		mapa.set_agents_file(agents_paths[i]);
 		std::string result = "OK";
 
-		auto started = std::chrono::high_resolution_clock::now();
+		std::chrono::time_point<std::chrono::high_resolution_clock> started;
 		long long preprocess_time_total = 0;
 		long long solver_time_total = 0;
 
@@ -314,7 +314,7 @@ std::string PruningCut::run_tests(size_t time_limit) {
 		mapa.set_agents_file(agents_paths[i]);
 		std::string result = "OK";
 
-		auto started = std::chrono::high_resolution_clock::now();
+		std::chrono::time_point<std::chrono::high_resolution_clock> started;
 		long long preprocess_time_total = 0;
 		long long solver_time_total = 0;
 
@@ -467,7 +467,7 @@ std::string Combined::run_tests(size_t time_limit) {
 		mapa.set_agents_file(agents_paths[i]);
 		std::string result = "OK";
 
-		auto started = std::chrono::high_resolution_clock::now();
+		std::chrono::time_point<std::chrono::high_resolution_clock> started;
 		long long preprocess_time_total = 0;
 		long long solver_time_total = 0;
 
