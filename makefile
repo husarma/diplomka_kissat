@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -std=c++17 -O3 -Wall -Wextra -pedantic
+CC = g++
+CFLAGS = -std=c++17 -O3 -Wall -Wextra -pedantic -pthread
 S_DIR = src
 E_DIR = $(S_DIR)/encodings
 B_DIR = build
