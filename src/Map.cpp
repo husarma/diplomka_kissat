@@ -204,8 +204,9 @@ std::string Map::reload(int number_of_agents) {
 	}
 }
 
-std::string Map::kissat(size_t agents_time_limit, size_t time_limit_ms) {
+std::string Map::kissat(std::string log_file, std::string alg, size_t agents_time_limit, size_t time_limit_ms) {
 
+	number_of_vertices = 0;
 	std::vector<std::vector<int>> map = std::vector<std::vector<int>>(expanded_map.size(), std::vector<int>(expanded_map[0].size(), 0));
 	for (size_t i = 0; i < expanded_map.size(); i++) {
 		for (size_t j = 0; j < expanded_map[0].size(); j++) {
@@ -214,6 +215,7 @@ std::string Map::kissat(size_t agents_time_limit, size_t time_limit_ms) {
 			}
 			else {
 				map[i][j] = expanded_map[i][j];
+				number_of_vertices++;
 			}
 		}
 	}
@@ -240,12 +242,49 @@ std::string Map::kissat(size_t agents_time_limit, size_t time_limit_ms) {
 	delete log;
 	delete inst;
 
+	std::string base_map_name = map_file_name.substr(map_file_name.find_last_of("/") + 1);
+
+	std::string base_agents_name = agents_file_name.substr(agents_file_name.find_last_of("/") + 1);
+
+	std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(number_of_vertices) + "\t" + std::to_string(agents.size()) + "\t" + std::to_string(agents_time_limit) + "\t";
+	std::ofstream ofile;
+	ofile.open(log_file, std::ios::app);
+	if (ofile.is_open()) {
+		ofile << out;
+	}
+
+	std::mutex m;
+
 	switch(res) {
 		case -1:
+			if (ofile.is_open()) {
+				ofile << "NO solution" << std::endl;
+			}
+			m.lock();
+			std::cout << alg + "\t" << out << "NO solution" << std::endl;
+			std::cout.flush();
+			m.unlock();
+			ofile.close();
 			return "NO solution";
 		case 0:
+			if (ofile.is_open()) {
+				ofile << "OK" << std::endl;
+			}
+			m.lock();
+			std::cout << alg + "\t" << out << "OK" << std::endl;
+			std::cout.flush();
+			m.unlock();
+			ofile.close();
 			return "OK";
 		case 1:
+			if (ofile.is_open()) {
+				ofile << "Timed out" << std::endl;
+			}
+			m.lock();
+			std::cout << alg + "\t" << out << "Timed out" << std::endl;
+			std::cout.flush();
+			m.unlock();
+			ofile.close();
 			return "Timed out";
 		default:
 			return "Timed out";

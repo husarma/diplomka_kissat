@@ -151,7 +151,7 @@ int main(int argc, char** argv) {
                 }
                 for (size_t j = 1; j < alg_params.size(); j++) {
 
-                    std::string agents_dir = dirs[i] + "\\scen-even";
+                    std::string agents_dir = dirs[i] + "/scen-even";
 
                     for (size_t p = 1; p < path_finder_params.size(); p++) {
 

@@ -55,7 +55,7 @@ public:
     std::string load_agents(int number_of_agents = -1, std::string custom_agents_file_name = "");
     std::string reload(int number_of_agents = -1);
 
-    std::string kissat(size_t agents_time_limit, size_t time_limit_ms);
+    std::string kissat(std::string log_file, std::string alg, size_t agents_time_limit, size_t time_limit_ms);
 
     size_t get_min_time();
 
