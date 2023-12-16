@@ -431,6 +431,7 @@ std::string PruningCut::run_tests(size_t time_limit) {
 						std::to_string(solver_time_total)
 						+ "\t" +
 						std::to_string(elapsed_time_total);
+					ofile << table_row << std::endl;
 				}
 
 				ofile.close();
