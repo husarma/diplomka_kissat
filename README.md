@@ -20,3 +20,5 @@ Create `Results.xlsx` file containing results from experiments by running python
 For now time limit for each instance is hardcoded 30s (I am planning to add extra run parameter for changing it by user).
 
 Be aware of high memory requirements while using multiple number of threads.
+
+Big thnaks to https://github.com/svancaj/MAPF-encodings for MAPF solving library based on kissat SAT solver. (`MAPF.hpp`, `libmapf.a`)
