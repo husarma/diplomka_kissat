@@ -107,7 +107,7 @@ std::string Baseline::run_tests(size_t time_limit) {
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/B_" + path_finder->get_name() + "_log.txt", "B_" + path_finder->get_name(), LB + bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			result = mapa.kissat(output_dir_path + "/B_" + path_finder->get_name() + "_log.txt", "B_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
 
 			auto solver_time_end = std::chrono::high_resolution_clock::now();
 			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
@@ -242,7 +242,7 @@ std::string MakespanAdd::run_tests(size_t time_limit) {
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/M_" + path_finder->get_name() + "_log.txt", "M_" + path_finder->get_name(), LB + bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			result = mapa.kissat(output_dir_path + "/M_" + path_finder->get_name() + "_log.txt", "M_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
 
 			auto solver_time_end = std::chrono::high_resolution_clock::now();
 			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
@@ -399,7 +399,7 @@ std::string PruningCut::run_tests(size_t time_limit) {
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/P_" + path_finder->get_name() + "_log.txt", "P_" + path_finder->get_name(), LB + bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			result = mapa.kissat(output_dir_path + "/P_" + path_finder->get_name() + "_log.txt", "P_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
 
 			auto solver_time_end = std::chrono::high_resolution_clock::now();
 			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
@@ -525,7 +525,7 @@ std::string Combined::run_tests(size_t time_limit) {
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/C_" + path_finder->get_name() + "_log.txt", "C_" + path_finder->get_name(), LB + bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			result = mapa.kissat(output_dir_path + "/C_" + path_finder->get_name() + "_log.txt", "C_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
 
 			auto solver_time_end = std::chrono::high_resolution_clock::now();
 			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();

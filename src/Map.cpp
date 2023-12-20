@@ -204,7 +204,7 @@ std::string Map::reload(int number_of_agents) {
 	}
 }
 
-std::string Map::kissat(std::string log_file, std::string alg, size_t agents_time_limit, size_t time_limit_ms) {
+std::string Map::kissat(std::string log_file, std::string alg, size_t lower_bound, size_t bonus_makespan, size_t time_limit_ms) {
 
 	number_of_vertices = 0;
 	std::vector<std::vector<int>> map = std::vector<std::vector<int>>(expanded_map.size(), std::vector<int>(expanded_map[0].size(), 0));
@@ -236,7 +236,7 @@ std::string Map::kissat(std::string log_file, std::string alg, size_t agents_tim
 	inst->SetAgents(agents.size());
 	log->NewInstance(agents.size());
 
-	int res = solver->Solve(agents.size(), (int)agents_time_limit, false);
+	int res = solver->Solve(agents.size(), (int)bonus_makespan, false);
 	
 	delete solver;
 	delete log;
@@ -246,7 +246,7 @@ std::string Map::kissat(std::string log_file, std::string alg, size_t agents_tim
 
 	std::string base_agents_name = agents_file_name.substr(agents_file_name.find_last_of("/") + 1);
 
-	std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(number_of_vertices) + "\t" + std::to_string(agents.size()) + "\t" + std::to_string(agents_time_limit) + "\t";
+	std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(number_of_vertices) + "\t" + std::to_string(agents.size()) + "\t" + std::to_string(lower_bound + bonus_makespan) + "\t";
 	std::ofstream ofile;
 	ofile.open(log_file, std::ios::app);
 	if (ofile.is_open()) {
