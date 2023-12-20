@@ -71,7 +71,7 @@ void runbase(std::string a, std::string b, char p, std::string c) {
     base->set_agents_dir(b);
     base->set_output_dir(c);
     base->set_path_finder(create_path_finder_strategy(p));
-    base->run_tests();
+    base->run_tests(30000);
 }
 
 void runmake(std::string a, std::string b, char p, std::string c) {
@@ -82,7 +82,7 @@ void runmake(std::string a, std::string b, char p, std::string c) {
     make->set_agents_dir(b);
     make->set_output_dir(c);
     make->set_path_finder(create_path_finder_strategy(p));
-    make->run_tests();
+    make->run_tests(30000);
 }
 
 void runprun(std::string a, std::string b, char p, std::string c) {
@@ -93,7 +93,7 @@ void runprun(std::string a, std::string b, char p, std::string c) {
     prun->set_agents_dir(b);
     prun->set_output_dir(c);
     prun->set_path_finder(create_path_finder_strategy(p));
-    prun->run_tests();
+    prun->run_tests(30000);
 }
 
 void runcomb(std::string a, std::string b, char p, std::string c) {
@@ -104,7 +104,7 @@ void runcomb(std::string a, std::string b, char p, std::string c) {
     comb->set_agents_dir(b);
     comb->set_output_dir(c);
     comb->set_path_finder(create_path_finder_strategy(p));
-    comb->run_tests();
+    comb->run_tests(30000);
 }
 
 int main(int argc, char** argv) {
