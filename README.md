@@ -21,4 +21,4 @@ For now time limit for each instance is hardcoded 30s (I am planning to add extr
 
 Be aware of high memory requirements while using multiple number of threads.
 
-Big thnaks to https://github.com/svancaj/MAPF-encodings for MAPF solving library based on kissat SAT solver. (`MAPF.hpp`, `libmapf.a`)
+Big thanks to https://github.com/svancaj/MAPF-encodings for MAPF solving library based on kissat SAT solver. (`MAPF.hpp`, `libmapf.a`)
