@@ -80,6 +80,9 @@ std::string Baseline::run_tests(size_t time_limit) {
 
 				bonus_makespan = 0;
 				number_of_agents_to_compute += 5;
+				if (number_of_agents_to_compute > 100) {
+					break;
+				}
 
 				err = mapa.load_agents(number_of_agents_to_compute);
 				if (err != "OK") {
@@ -190,6 +193,9 @@ std::string MakespanAdd::run_tests(size_t time_limit) {
 
 				bonus_makespan = 0;
 				number_of_agents_to_compute += 5;
+				if (number_of_agents_to_compute > 100) {
+					break;
+				}
 
 				err = mapa.load_agents(number_of_agents_to_compute);
 				if (err != "OK") {
@@ -330,6 +336,9 @@ std::string PruningCut::run_tests(size_t time_limit) {
 				k = 1;
 				try_full_map = false;
 				number_of_agents_to_compute += 5;
+				if (number_of_agents_to_compute > 100) {
+					break;
+				}
 
 				err = mapa.load_agents(number_of_agents_to_compute);
 				if (err != "OK") {
@@ -482,7 +491,10 @@ std::string Combined::run_tests(size_t time_limit) {
 
 				bonus_makespan = 0;
 				number_of_agents_to_compute += 5;
-
+				if (number_of_agents_to_compute > 100) {
+					break;
+				}
+				
 				err = mapa.load_agents(number_of_agents_to_compute);
 				if (err != "OK") {
 					std::cout << err << std::endl;
