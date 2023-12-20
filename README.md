@@ -17,6 +17,6 @@ Example of runing experiemnts `./build/mapf_experiments -mp -wx 4 Experiments/Te
 
 Create `Results.xlsx` file containing results from experiments by running python script `results_maker.py` located in `Experiments` folder.
 
-For now time limit for each instance is hardcoded 1m (I am planning to add extra run parameter for changing it by user).
+For now time limit for each instance is hardcoded 30s (I am planning to add extra run parameter for changing it by user).
 
 Be aware of high memory requirements while using multiple number of threads.
