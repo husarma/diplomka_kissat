@@ -63,7 +63,7 @@ std::unique_ptr<PathFinderI> create_path_finder_strategy(char p) {
     }
 }
 
-void runbase(std::string a, std::string b, char p, std::string c) {
+void runbase(std::string a, std::string b, char p, std::string c, size_t t) {
 
     std::unique_ptr<ComputeStrategyI> base = std::make_unique<Baseline>();
 
@@ -71,10 +71,10 @@ void runbase(std::string a, std::string b, char p, std::string c) {
     base->set_agents_dir(b);
     base->set_output_dir(c);
     base->set_path_finder(create_path_finder_strategy(p));
-    base->run_tests(30000);
+    base->run_tests(t*1000);
 }
 
-void runmake(std::string a, std::string b, char p, std::string c) {
+void runmake(std::string a, std::string b, char p, std::string c, size_t t) {
 
     std::unique_ptr<ComputeStrategyI> make = std::make_unique<MakespanAdd>();
 
@@ -82,10 +82,10 @@ void runmake(std::string a, std::string b, char p, std::string c) {
     make->set_agents_dir(b);
     make->set_output_dir(c);
     make->set_path_finder(create_path_finder_strategy(p));
-    make->run_tests(30000);
+    make->run_tests(t*1000);
 }
 
-void runprun(std::string a, std::string b, char p, std::string c) {
+void runprun(std::string a, std::string b, char p, std::string c, size_t t) {
 
     std::unique_ptr<ComputeStrategyI> prun = std::make_unique<PruningCut>();
 
@@ -93,10 +93,10 @@ void runprun(std::string a, std::string b, char p, std::string c) {
     prun->set_agents_dir(b);
     prun->set_output_dir(c);
     prun->set_path_finder(create_path_finder_strategy(p));
-    prun->run_tests(30000);
+    prun->run_tests(t*1000);
 }
 
-void runcomb(std::string a, std::string b, char p, std::string c) {
+void runcomb(std::string a, std::string b, char p, std::string c, size_t t) {
 
     std::unique_ptr<ComputeStrategyI> comb = std::make_unique<Combined>();
 
@@ -104,7 +104,7 @@ void runcomb(std::string a, std::string b, char p, std::string c) {
     comb->set_agents_dir(b);
     comb->set_output_dir(c);
     comb->set_path_finder(create_path_finder_strategy(p));
-    comb->run_tests(30000);
+    comb->run_tests(t*1000);
 }
 
 int main(int argc, char** argv) {
@@ -112,17 +112,14 @@ int main(int argc, char** argv) {
     std::vector<std::string> dirs;
     double tasks_total = 0;
 
-    if (argc < 4 || argc > 5) {
+    if (argc != 5) {
         std::cout << "ERROR: Wrong number of arguments" << std::endl;
         return 1;
     }
 
-    int thread_count = 1;
-    if (argc == 5) {
-        thread_count = atoi(argv[3]);
-    }
+    size_t time_limit_s = atoi(argv[3]);
 
-    BS::thread_pool thread_pool(thread_count);
+    BS::thread_pool thread_pool(1);
 
     for (auto& p : std::filesystem::directory_iterator(argv[4])) {
 
@@ -163,16 +160,16 @@ int main(int argc, char** argv) {
                                 std::cout << "ERROR: Undefined algorithm option: -" << alg_params[j] << std::endl;
                                 return 1;
                             case 'b':
-                                thread_pool.push_task(runbase, map_name, agents_dir, path_finder_params[p], dirs[i]);
+                                thread_pool.push_task(runbase, map_name, agents_dir, path_finder_params[p], dirs[i], time_limit_s);
                                 break;
                             case 'm':
-                                thread_pool.push_task(runmake, map_name, agents_dir, path_finder_params[p], dirs[i]);
+                                thread_pool.push_task(runmake, map_name, agents_dir, path_finder_params[p], dirs[i], time_limit_s);
                                 break;
                             case 'p':
-                                thread_pool.push_task(runprun, map_name, agents_dir, path_finder_params[p], dirs[i]);
+                                thread_pool.push_task(runprun, map_name, agents_dir, path_finder_params[p], dirs[i], time_limit_s);
                                 break;
                             case 'c':
-                                thread_pool.push_task(runcomb, map_name, agents_dir, path_finder_params[p], dirs[i]);
+                                thread_pool.push_task(runcomb, map_name, agents_dir, path_finder_params[p], dirs[i], time_limit_s);
                                 break;
                             default:
                                 //Should not occur

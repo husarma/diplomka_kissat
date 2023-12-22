@@ -206,41 +206,74 @@ std::string Map::reload(int number_of_agents) {
 
 std::string Map::kissat(std::string log_file, std::string alg, size_t lower_bound, size_t bonus_makespan, size_t time_limit_ms) {
 
+	std::filesystem::create_directory("temp");
+	std::string instance_file = "temp/instance.txt";
+	std::string result_file = "temp/result.txt";
+
+	std::ofstream fs;
+	fs.open(result_file);
+	fs.close();
+
+	std::ofstream instance;
+	instance.open(instance_file);
+
 	number_of_vertices = 0;
-	std::vector<std::vector<int>> map = std::vector<std::vector<int>>(expanded_map.size(), std::vector<int>(expanded_map[0].size(), 0));
-	for (size_t i = 0; i < expanded_map.size(); i++) {
-		for (size_t j = 0; j < expanded_map[0].size(); j++) {
-			if (expanded_map[i][j] == 0) {
-				map[i][j] = -1;
+	if (instance.is_open()) {
+		//print time limit in s
+		instance << time_limit_ms/1000 << std::endl;
+
+		//print bonus makespan
+		instance << bonus_makespan << std::endl;
+
+		//print number of agents
+		instance << agents.size() << std::endl;
+
+		//print size of map
+		instance << expanded_map.size() << std::endl;
+		instance << expanded_map[0].size() << std::endl;
+
+		//print map
+		instance << "map:" << std::endl;
+		for (size_t i = 0; i < expanded_map.size(); i++) {
+			for (size_t j = 0; j < expanded_map[0].size(); j++) {
+				if (expanded_map[i][j] == 0) {
+					instance << "#";
+				}
+				else {
+					instance << ".";
+					number_of_vertices++;
+				}
 			}
-			else {
-				map[i][j] = expanded_map[i][j];
-				number_of_vertices++;
-			}
+			instance << std::endl;
+		}
+
+		//print agents
+		instance << "agents:" << std::endl;
+		for (size_t a = 0; a < agents.size(); a++) {
+			instance << agents[a].first.first << "\t" << agents[a].first.second << "\t" << agents[a].second.first << "\t" << agents[a].second.second << std::endl;
 		}
 	}
 
-	std::vector<std::pair<int, int>> starts;
-	std::vector<std::pair<int, int>> goals;
+	instance.close();
 
-	for (size_t a = 0; a < agents.size(); a++) {
-		starts.push_back(std::make_pair<int, int>((int)agents[a].first.first, (int)agents[a].first.second));
-		goals.push_back(std::make_pair<int, int>((int)agents[a].second.first, (int)agents[a].second.second));
+	//start solver
+	std::stringstream exec;
+	exec << "./build/solver " << instance_file << " " << result_file;
+	auto x = exec.str();
+	int ret = system(x.c_str());
+	if (ret != 0) {
+		std::cout << "Solver died!" << std::endl;
+		std::cout.flush();
 	}
 
-	Instance* inst = new Instance(map, starts, goals, "scenario", "map_name");
-	Logger* log = new Logger(inst, "log.log", "encoding_name");
-	Pass_parallel_mks_all* solver = new Pass_parallel_mks_all("encoding_name", 1);
+	//read result
+	std::ifstream result;
+	result.open(result_file);
 
-	solver->SetData(inst, log, time_limit_ms/1000, true, false);
-	inst->SetAgents(agents.size());
-	log->NewInstance(agents.size());
-
-	int res = solver->Solve(agents.size(), (int)bonus_makespan, false);
-	
-	delete solver;
-	delete log;
-	delete inst;
+	std::string result_line;
+	if (result.is_open()) {
+		std::getline(result, result_line);
+	}
 
 	std::string base_map_name = map_file_name.substr(map_file_name.find_last_of("/") + 1);
 
@@ -255,41 +288,52 @@ std::string Map::kissat(std::string log_file, std::string alg, size_t lower_boun
 
 	std::mutex m;
 
-	switch(res) {
-		case -1:
-			if (ofile.is_open()) {
-				ofile << "NO solution" << std::endl;
-			}
-			m.lock();
-			std::cout << alg + "\t" << out << "NO solution" << std::endl;
-			std::cout.flush();
-			m.unlock();
-			ofile.close();
-			return "NO solution";
-		case 0:
-			if (ofile.is_open()) {
-				ofile << "OK" << std::endl;
-			}
-			m.lock();
-			std::cout << alg + "\t" << out << "OK" << std::endl;
-			std::cout.flush();
-			m.unlock();
-			ofile.close();
-			return "OK";
-		case 1:
-			if (ofile.is_open()) {
-				ofile << "Timed out" << std::endl;
-			}
-			m.lock();
-			std::cout << alg + "\t" << out << "Timed out" << std::endl;
-			std::cout.flush();
-			m.unlock();
-			ofile.close();
-			return "Timed out";
-		default:
-			ofile.close();
-			return "Timed out";
+	if (result_line == "NO solution") {
+		if (ofile.is_open()) {
+			ofile << "NO solution" << std::endl;
+		}
+		m.lock();
+		std::cout << alg + "\t" << out << "NO solution" << std::endl;
+		std::cout.flush();
+		m.unlock();
+		ofile.close();
+		std::filesystem::remove_all("temp");
+		return "NO solution";
 	}
+	else if (result_line == "OK") {
+		if (ofile.is_open()) {
+			ofile << "OK" << std::endl;
+		}
+		m.lock();
+		std::cout << alg + "\t" << out << "OK" << std::endl;
+		std::cout.flush();
+		m.unlock();
+		ofile.close();
+		std::filesystem::remove_all("temp");
+		return "OK";
+	}
+	else if (result_line == "Timed out") {
+		if (ofile.is_open()) {
+			ofile << "Timed out" << std::endl;
+		}
+		m.lock();
+		std::cout << alg + "\t" << out << "Timed out" << std::endl;
+		std::cout.flush();
+		m.unlock();
+		ofile.close();
+		std::filesystem::remove_all("temp");
+		return "Timed out";
+	}
+	if (ofile.is_open()) {
+		ofile << "Killed" << std::endl;
+	}
+	m.lock();
+	std::cout << alg + "\t" << out << "Killed" << std::endl;
+	std::cout.flush();
+	m.unlock();
+	ofile.close();
+	std::filesystem::remove_all("temp");
+	return "Timed out";
 }
 
 /** Computes minimal required time for agents to complete its paths.
