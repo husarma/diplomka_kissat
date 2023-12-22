@@ -13,11 +13,11 @@ Path finder algorithms:
 - `x` WithoutCrossingAtSameTimes
 
 Run experiments by `./build/mapf_experiments -{b|m|p|c} -{b|r|w|x} {time limit for each instance in seconds} {relative path to tests folder}`
+
 Example of runing experiemnts `./build/mapf_experiments -mp -wx 30 Experiments/Tests`
 
 Create `Results.xlsx` file containing results from experiments by running python script `results_maker.py` located in `Experiments` folder.
 
-For now time limit for each instance is hardcoded 30s (I am planning to add extra run parameter for changing it by user).
 
 Be aware of high memory requirements for large maps or high agents count.
 
