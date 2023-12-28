@@ -46,9 +46,7 @@ int main(int argc, char** argv) {
 		map_width = atoi(&instance_line[0]);
 
         //load map
-        while (instance_line != "map:") {
-            std::getline(instance_file, instance_line); //line containing map:
-        }
+        std::getline(instance_file, instance_line); //line containing map:
 
 		map = std::vector<std::vector<int>>(map_height, std::vector<int>(map_width, 0));
         for (int i = 0; i < map_height; i++) {
@@ -65,9 +63,7 @@ int main(int argc, char** argv) {
         }
 
         //load agents
-        while (instance_line != "agents:") {
-            std::getline(instance_file, instance_line); //line containing agents:
-        }
+        std::getline(instance_file, instance_line); //line containing agents:
 
         for (int i = 0; i < number_of_agents; i++) {
 
