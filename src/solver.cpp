@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
 	inst->SetAgents(number_of_agents);
 	log->NewInstance(number_of_agents);
 
-	int res = solver->Solve(number_of_agents, bonus_makespan, false);
+	int res = solver->Solve(number_of_agents, bonus_makespan, true);
 	
 	delete solver;
 	delete log;
