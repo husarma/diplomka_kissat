@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++17 -O3 -Wall -Wextra -pedantic -pthread
+CFLAGS = -std=c++20 -O3 -Wall -Wextra -pedantic -pthread
 S_DIR = src
 B_DIR = build
 PROJECT_NAME = mapf_experiments
