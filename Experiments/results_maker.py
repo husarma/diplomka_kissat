@@ -106,6 +106,15 @@ def main(args: argparse.Namespace):
         }
     )
 
+    Rec_format = workbook.add_format(
+    {
+        "bold": 1,
+        "border": 1,
+        "align": "center",
+        "fg_color": "#FFFFFF",
+    }
+    )
+
     subheader_format = workbook.add_format(
         {
             "border": 1,
@@ -137,9 +146,9 @@ def main(args: argparse.Namespace):
     algorithms_names = ["C", "M", "P"]
     algorithms_formats = [C_format, M_format, P_format]
     optimal_algorithms = ["B", "P"]
-    path_finder_names = ["Biaset", "Random", "WithoutCrossing", "WithoutCrossingAtSameTimes"]
-    path_finder_names_short = ["Bia", "Ran", "WCr", "XCr"]
-    path_finder_formats = [Biaset_format, Random_format, WCross_format, XCross_format]
+    path_finder_names = ["Biaset", "Random", "WithoutCrossing", "WithoutCrossingAtSameTimes", "RecursivePaths"]
+    path_finder_names_short = ["Bia", "Ran", "WCr", "XCr", "Rec"]
+    path_finder_formats = [Biaset_format, Random_format, WCross_format, XCross_format, Rec_format]
     common_alg_subheader_data = ["V", "S-mks", "P-time-ms", "S-time-ms", "SO"]
     common_map_information = ["map_name", "size", "Scenario", "Agents", "LB", "OS"]
 
