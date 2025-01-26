@@ -56,6 +56,8 @@ std::unique_ptr<PathFinderI> create_path_finder_strategy(char p) {
         return std::make_unique<WithoutCrossing>();
     case 'x':
         return std::make_unique<WithoutCrossingAtSameTimes>();
+    case 'R':
+        return std::make_unique<RecursivePaths>();
     default:
         std::cout << "ERROR: Undefined path finder option: -" << p << std::endl;
         throw std::invalid_argument("ERROR: Undefined path finder option: -" + p);

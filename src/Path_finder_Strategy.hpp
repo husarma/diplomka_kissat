@@ -36,3 +36,9 @@ class WithoutCrossingAtSameTimes : public PathFinderI {
     std::string get_name() override;
     std::string compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) override;
 };
+
+/** Concrete implementation of strategy for computing shortest paths.*/
+class RecursivePaths : public PathFinderI {
+    std::string get_name() override;
+    std::string compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) override;
+};
