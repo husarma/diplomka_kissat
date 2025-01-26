@@ -107,12 +107,12 @@ def main(args: argparse.Namespace):
     )
 
     Rec_format = workbook.add_format(
-    {
-        "bold": 1,
-        "border": 1,
-        "align": "center",
-        "fg_color": "#FFFFFF",
-    }
+        {
+            "bold": 1,
+            "border": 1,
+            "align": "center",
+            "fg_color": "#FFFFFF",
+        }
     )
 
     subheader_format = workbook.add_format(
