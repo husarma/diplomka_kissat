@@ -17,7 +17,7 @@ Run experiments by `./build/mapf_experiments -{b|m|p|c} -{b|r|w|x|R} {time limit
 
 Example of runing experiemnts `./build/mapf_experiments -mp -wx 30 Experiments/Tests`
 
-Create `Results.xlsx` file containing results from experiments by running python script `results_maker.py` located in `Experiments` folder. You can create conda enviroment with all required libraries with `env/environment.yml` file after miniconda [instalation](https://docs.anaconda.com/miniconda/install/) with `conda env create -f environment.yml` command.
+Create `Results.xlsx` file containing results from experiments by running python script located in `Experiments` folder by `python Experiments/results_maker.py --data_path Experiments/Tests`. You can create conda enviroment with all required libraries with `env/environment.yml` file after miniconda [instalation](https://docs.anaconda.com/miniconda/install/) with `conda env create -f environment.yml` command.
 
 
 Be aware of high memory requirements for large maps or high agents count.
