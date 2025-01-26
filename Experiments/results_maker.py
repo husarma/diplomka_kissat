@@ -151,7 +151,7 @@ def main(args: argparse.Namespace):
         relative_algorithms_offsets[algorithm] = common_info_and_baseline_header_offset + i*len(common_alg_subheader_data)*len(path_finder_names)
 
     for i, algorithm in enumerate(path_finder_names):
-        relative_algorithms_offsets[algorithm] = i*(len(path_finder_names) + 1)
+        relative_algorithms_offsets[algorithm] = i*(len(common_alg_subheader_data))
 
     # Common information and Algorithms headers creation.
     results_sheet.merge_range(0, 0, 0, len(common_map_information) - 1, "", Common_information_black_format)
@@ -182,7 +182,7 @@ def main(args: argparse.Namespace):
         for j in range(len(common_alg_subheader_data)):
             # Pathfinder algorithms subheader creation.
             if j == 0:
-                    results_sheet.merge_range(1, common_info_and_baseline_header_offset + i*len(common_alg_subheader_data), 1, common_info_and_baseline_header_offset + i*len(common_alg_subheader_data) + len(path_finder_names), path_finder_names_short[i % len(path_finder_names)], path_finder_formats[i % len(path_finder_formats)])
+                results_sheet.merge_range(1, common_info_and_baseline_header_offset + i*len(common_alg_subheader_data), 1, common_info_and_baseline_header_offset + i*len(common_alg_subheader_data) + len(common_alg_subheader_data) - 1, path_finder_names_short[i % len(path_finder_names)], path_finder_formats[i % len(path_finder_formats)])
             if i == 0:
                 results_sheet.write(2, common_info_and_baseline_header_offset + j, common_alg_subheader_data[j], subheader_format)
             else:
