@@ -1,5 +1,7 @@
 #include "Map.hpp"
 
+#include "Algorithms.hpp"
+
 #include <mutex>
 #include <filesystem>
 #include <limits.h>
@@ -204,6 +206,53 @@ std::string Map::reload(int number_of_agents) {
 	}
 }
 
+bool Map::are_paths_distinct() {
+	//start position is alwais valid -> satisfied with pathfinding
+
+	//end position is alwais valid -> satisfied with pathfinding
+
+	//each agent is alwais on only one position -> satisfied with pathfinding
+
+	//each position is occupied with just one agent
+	for (size_t timestep = 0; timestep < agents_shortest_paths[0].size(); timestep++) {
+		for (size_t agent = 0; agent < agents_shortest_paths.size(); agent++) {
+			for (size_t comape_with = agent + 1; comape_with < agents_shortest_paths.size(); comape_with++) {
+				if (agents_shortest_paths[agent][timestep].first == agents_shortest_paths[comape_with][timestep].first &&
+					agents_shortest_paths[agent][timestep].second == agents_shortest_paths[comape_with][timestep].second) {
+					return false;
+				}
+			}
+		}
+	}
+
+	//agent can traverse just from edge that comes from vertex -> satisfied with pathfinding
+
+	//agent after taking step arrives to next vertex in time t+1 -> satisfied with pathfinding
+
+	//no two agents can swap their position throught the same edge
+	for (size_t timestep = 0; timestep < agents_shortest_paths[0].size() - 1; timestep++) {
+		for (size_t agent = 0; agent < agents_shortest_paths.size(); agent++) {
+			for (size_t comape_with = agent + 1; comape_with < agents_shortest_paths.size(); comape_with++) {
+	
+				auto agent_position_in_time = agents_shortest_paths[agent][timestep];
+				auto agent_position_in_next_time = agents_shortest_paths[agent][timestep + 1];
+
+				auto comape_with_in_time = agents_shortest_paths[comape_with][timestep];
+				auto comape_with_position_in_next_time = agents_shortest_paths[comape_with][timestep + 1];
+
+				if (agent_position_in_next_time.first == comape_with_in_time.first && 
+					agent_position_in_next_time.second == comape_with_in_time.second && 
+					agent_position_in_time.first == comape_with_position_in_next_time.first &&
+					agent_position_in_time.second == comape_with_position_in_next_time.second) {
+					return false;
+				}
+			}
+		}
+	}
+	
+	return true;
+}
+
 std::string Map::kissat(std::string log_file, std::string alg, size_t lower_bound, size_t bonus_makespan, size_t time_limit_ms) {
 
 	std::filesystem::create_directory("temp");
@@ -344,11 +393,14 @@ std::string Map::kissat(std::string log_file, std::string alg, size_t lower_boun
 */
 size_t Map::get_min_time() {
 	size_t max = 0;
-	for (size_t a = 0; a < agents_shortest_paths.size(); a++) {
-		if (agents_shortest_paths[a].size() > max) {
-			max = agents_shortest_paths[a].size();
+
+	for (size_t i = 0; i < agents.size(); i++) {
+		size_t agent_time = compute_time_expanded_graph(map, agents[i].first)[agents[i].second.first][agents[i].second.second];
+		if (agent_time > max) {
+			max = agent_time;
 		}
 	}
+
 	return max;
 }
 

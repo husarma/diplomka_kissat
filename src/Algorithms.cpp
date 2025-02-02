@@ -116,7 +116,7 @@ size_t give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 	return vertex_number - 1;
 }
 
-std::vector<std::vector<size_t>> time_expanded_graph(std::vector<std::vector<size_t>>& input_map, std::pair<size_t, size_t> agent) {
+std::vector<std::vector<size_t>> compute_time_expanded_graph(std::vector<std::vector<size_t>>& input_map, std::pair<size_t, size_t> agent) {
 
 	std::vector<std::vector<size_t>> temp_map(input_map.size(), std::vector<size_t>(input_map[0].size(), 0));
 
@@ -168,8 +168,8 @@ std::set<size_t> find_used_vertices(std::vector<std::vector<size_t>>& input_map,
 
 	for (size_t a = 0; a < agents.size(); a++) {
 
-		auto start_to_finish = time_expanded_graph(input_map, agents[a].first);
-		auto finish_to_start = time_expanded_graph(input_map, agents[a].second);
+		auto start_to_finish = compute_time_expanded_graph(input_map, agents[a].first);
+		auto finish_to_start = compute_time_expanded_graph(input_map, agents[a].second);
 
 		for (size_t i = 0; i < start_to_finish.size(); i++) {
 			for (size_t j = 0; j < start_to_finish[0].size(); j++) {

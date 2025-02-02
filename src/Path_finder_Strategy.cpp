@@ -12,7 +12,7 @@
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string Biaset::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
+std::string Biaset::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t makespan) {
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
 	}
@@ -82,6 +82,13 @@ std::string Biaset::compute_shortest_paths(std::vector<std::vector<size_t>>& ref
 		}
 	}
 
+	//make all path the same length
+	for (size_t a = 0; a < agents.size(); a++) {
+		while(output_paths[a].size() < makespan) {
+			output_paths[a].push_back(output_paths[a].back());
+		}
+	}
+
 	return "OK";
 }
 
@@ -98,7 +105,7 @@ std::string Biaset::get_name() {
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string TrullyRandom::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
+std::string TrullyRandom::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t makespan) {
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
 	}
@@ -208,6 +215,13 @@ std::string TrullyRandom::compute_shortest_paths(std::vector<std::vector<size_t>
 		}
 	}
 
+	//make all path the same length
+	for (size_t a = 0; a < agents.size(); a++) {
+		while(output_paths[a].size() < makespan) {
+			output_paths[a].push_back(output_paths[a].back());
+		}
+	}
+
 	return "OK";
 }
 
@@ -273,7 +287,7 @@ public:
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string WithoutCrossing::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
+std::string WithoutCrossing::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t makespan) {
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
 	}
@@ -387,6 +401,13 @@ std::string WithoutCrossing::compute_shortest_paths(std::vector<std::vector<size
 		}
 	}
 
+	//make all path the same length
+	for (size_t a = 0; a < agents.size(); a++) {
+		while(output_paths[a].size() < makespan) {
+			output_paths[a].push_back(output_paths[a].back());
+		}
+	}
+
 	return "OK";
 }
 
@@ -403,7 +424,7 @@ std::string WithoutCrossing::get_name() {
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string WithoutCrossingAtSameTimes::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
+std::string WithoutCrossingAtSameTimes::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t makespan) {
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
 	}
@@ -526,6 +547,13 @@ std::string WithoutCrossingAtSameTimes::compute_shortest_paths(std::vector<std::
 		}
 	}
 
+	//make all path the same length
+	for (size_t a = 0; a < agents.size(); a++) {
+		while(output_paths[a].size() < makespan) {
+			output_paths[a].push_back(output_paths[a].back());
+		}
+	}
+
 	return "OK";
 }
 
@@ -536,44 +564,60 @@ std::string WithoutCrossingAtSameTimes::get_name() {
 class CompareWithoutCrossingR {
 public:
 	std::pair<size_t, size_t> finish;
+
+	CompareWithoutCrossingR() {}
+
+	CompareWithoutCrossingR(std::pair<size_t, size_t> finish) :
+		finish(finish)
+	{}
+
+	bool operator()(std::pair<size_t, size_t> above, std::pair<size_t, size_t> below) const {
+
+		size_t below_h = abs((int)below.first - (int)finish.first) + abs((int)below.second - (int)finish.second);
+
+		size_t above_h = abs((int)above.first - (int)finish.first) + abs((int)above.second - (int)finish.second);
+
+		//how far their are from finish
+		if (below_h < above_h) {
+			return true;
+		}
+		if (below_h > above_h) {
+			return false;
+		}
+		//they are equal in everything
+		return false;
+	}
+};
+
+class CompareWithoutCrossingRConflict {
+public:
+	std::pair<size_t, size_t> finish;
 	size_t remaining_steps;
-	std::vector<std::vector<size_t>>* dep_reachable_in_time = nullptr;
 	std::vector<std::vector<std::vector<size_t>>>* dep_used_number_of_vertex = nullptr;
 
-	CompareWithoutCrossingR() {
-		dep_reachable_in_time = nullptr;
+	CompareWithoutCrossingRConflict() {
 		dep_used_number_of_vertex = nullptr;
 	}
 
-	CompareWithoutCrossingR(std::pair<size_t, size_t> finish, size_t remaining_steps, std::vector<std::vector<size_t>>& reachable_in_time, std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex) :
+	CompareWithoutCrossingRConflict(std::pair<size_t, size_t> finish, size_t remaining_steps, std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex) :
 		finish(finish),
 		remaining_steps(remaining_steps),
-		dep_reachable_in_time(&reachable_in_time),
 		dep_used_number_of_vertex(&used_number_of_vertex)
 	{}
 
 	bool operator()(std::pair<size_t, size_t> above, std::pair<size_t, size_t> below) const {
 		const std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex_reference = *dep_used_number_of_vertex;
-		const std::vector<std::vector<size_t>>& reachable_in_time_reference = *dep_reachable_in_time;
 
-		size_t below_time = reachable_in_time_reference[below.first][below.second];
 		size_t below_h = abs((int)below.first - (int)finish.first) + abs((int)below.second - (int)finish.second);
 
 		std::vector<size_t> used_in_times_vec_below = used_number_of_vertex_reference[below.first][below.second];
 		size_t below_used_times = std::count(used_in_times_vec_below.begin(), used_in_times_vec_below.end(), remaining_steps - 1);
 
-		size_t above_time = reachable_in_time_reference[above.first][above.second];
 		size_t above_h = abs((int)above.first - (int)finish.first) + abs((int)above.second - (int)finish.second);
 
 		std::vector<size_t> used_in_times_vec_above = used_number_of_vertex_reference[above.first][above.second];
 		size_t above_used_times = std::count(used_in_times_vec_above.begin(), used_in_times_vec_above.end(), remaining_steps - 1);
 
-		if (below_time > above_time) {
-			return true;
-		}
-		if (below_time < above_time) {
-			return false;
-		}
 		//how far their are from finish
 		if (below_h < above_h) {
 			return true;
@@ -588,10 +632,6 @@ public:
 		if (below_used_times > above_used_times) {
 			return false;
 		}
-		//below is finish then swap
-		if (below.first == finish.first && below.second == finish.second) {
-			return true;
-		}
 		//they are equal in everything
 		return false;
 	}
@@ -599,31 +639,52 @@ public:
 
 template <typename T>
 bool IsInVector(std::vector<T>& vec, T to_find) {
-   auto it { std::find(vec.begin(), vec.end(), to_find) };
+	auto it { std::find(vec.begin(), vec.end(), to_find) };
 
-   if (it != vec.end())
-   {
-      return true;
-   }
+	if (it != vec.end()) {
+		return true;
+	}
 
-   return false;
+	return false;
+}
+
+bool IsSwapping(
+	size_t current_time, 
+	std::pair<size_t, size_t> current_position, 
+	std::pair<size_t, size_t> next_position, 
+	std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex,
+	std::vector<std::vector<std::vector<std::pair<size_t, size_t>>>>& next_vertex
+) {
+
+	for (size_t i = 0; i < used_number_of_vertex[next_position.first][next_position.second].size(); i++) {
+		if (used_number_of_vertex[next_position.first][next_position.second][i] == current_time && 
+			next_vertex[next_position.first][next_position.second][i] == current_position) {
+			
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool compute_path_recursive(
 	std::vector<std::vector<size_t>>& reachable_in_time,
 	std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex,
+	std::vector<std::vector<std::vector<std::pair<size_t, size_t>>>>& next_vertex,
 	std::vector<std::vector<std::vector<size_t>>>& visited,
 	std::pair<size_t, size_t> current_position,
 	std::pair<size_t, size_t> goal,
 	size_t remaining_steps,
+	size_t remaining_conflicts, 
 	std::vector<std::pair<size_t, size_t>>& final_path
 ) {
 
 	//stopping condition
-	if (current_position.first == goal.first && current_position.second == goal.second) {
-		final_path.push_back(current_position);
+	if (current_position.first == goal.first && current_position.second == goal.second && remaining_steps == 0) {
 
-		used_number_of_vertex[current_position.first][current_position.second].push_back(remaining_steps);
+		final_path.push_back(current_position);
+		used_number_of_vertex[current_position.first][current_position.second].push_back(0);
+		next_vertex[current_position.first][current_position.second].push_back(std::make_pair(SIZE_MAX, SIZE_MAX));
 
 		return true;
 	}
@@ -631,46 +692,120 @@ bool compute_path_recursive(
 	visited[current_position.first][current_position.second].push_back(remaining_steps);
 
 	std::vector<std::pair<size_t, size_t>> priority_queue = std::vector<std::pair<size_t, size_t>>();
-	CompareWithoutCrossingR comparator = CompareWithoutCrossingR(goal, remaining_steps, reachable_in_time, used_number_of_vertex);
+	std::vector<std::pair<size_t, size_t>> conflict_priority_queue = std::vector<std::pair<size_t, size_t>>();
+	CompareWithoutCrossingR comparator = CompareWithoutCrossingR(goal);
+	CompareWithoutCrossingRConflict conflict_comparator = CompareWithoutCrossingRConflict(goal, remaining_steps, used_number_of_vertex);
 
 	if (remaining_steps > 0) {
-		if (reachable_in_time[current_position.first - 1][current_position.second] != 0 && 
+		if ((reachable_in_time[current_position.first - 1][current_position.second] != 0 || std::make_pair(current_position.first - 1, current_position.second) == goal) && 
 			abs((int)reachable_in_time[goal.first][goal.second] - (int)reachable_in_time[current_position.first - 1][current_position.second]) <= remaining_steps - 1 &&
 			!IsInVector(visited[current_position.first - 1][current_position.second], remaining_steps - 1)) {
-			priority_queue.push_back(std::make_pair(current_position.first - 1, current_position.second));
+
+			std::vector<size_t> used_in_times_vec = used_number_of_vertex[current_position.first - 1][current_position.second];
+			size_t used_times = std::count(used_in_times_vec.begin(), used_in_times_vec.end(), remaining_steps - 1);
+
+			if (IsSwapping(remaining_steps, current_position, std::make_pair(current_position.first - 1, current_position.second), used_number_of_vertex, next_vertex) || used_times > 0) {
+				conflict_priority_queue.push_back(std::make_pair(current_position.first - 1, current_position.second));
+			}
+			else {
+				priority_queue.push_back(std::make_pair(current_position.first - 1, current_position.second));
+			}
 		}
-		if (reachable_in_time[current_position.first][current_position.second + 1] != 0 && 
+		if ((reachable_in_time[current_position.first][current_position.second + 1] != 0 || std::make_pair(current_position.first, current_position.second + 1) == goal) && 
 			abs((int)reachable_in_time[goal.first][goal.second] - (int)reachable_in_time[current_position.first][current_position.second + 1]) <= remaining_steps - 1 &&
 			!IsInVector(visited[current_position.first][current_position.second + 1], remaining_steps - 1)) {
-			priority_queue.push_back(std::make_pair(current_position.first, current_position.second + 1));
+
+			std::vector<size_t> used_in_times_vec = used_number_of_vertex[current_position.first][current_position.second + 1];
+			size_t used_times = std::count(used_in_times_vec.begin(), used_in_times_vec.end(), remaining_steps - 1);
+
+			if (IsSwapping(remaining_steps, current_position, std::make_pair(current_position.first, current_position.second + 1), used_number_of_vertex, next_vertex) || used_times > 0) {
+				conflict_priority_queue.push_back(std::make_pair(current_position.first, current_position.second + 1));
+			}
+			else {
+				priority_queue.push_back(std::make_pair(current_position.first, current_position.second + 1));
+			}
 		}
-		if (reachable_in_time[current_position.first + 1][current_position.second] != 0 && 
+		if ((reachable_in_time[current_position.first + 1][current_position.second] != 0 || std::make_pair(current_position.first + 1, current_position.second) == goal) && 
 			abs((int)reachable_in_time[goal.first][goal.second] - (int)reachable_in_time[current_position.first + 1][current_position.second]) <= remaining_steps - 1 &&
 			!IsInVector(visited[current_position.first + 1][current_position.second], remaining_steps - 1)) {
-			priority_queue.push_back(std::make_pair(current_position.first + 1, current_position.second));
+
+			std::vector<size_t> used_in_times_vec = used_number_of_vertex[current_position.first + 1][current_position.second];
+			size_t used_times = std::count(used_in_times_vec.begin(), used_in_times_vec.end(), remaining_steps - 1);
+
+			if (IsSwapping(remaining_steps, current_position, std::make_pair(current_position.first + 1, current_position.second), used_number_of_vertex, next_vertex) || used_times > 0) {
+				conflict_priority_queue.push_back(std::make_pair(current_position.first + 1, current_position.second));
+			}
+			else {
+				priority_queue.push_back(std::make_pair(current_position.first + 1, current_position.second));
+			}
 		}
-		if (reachable_in_time[current_position.first][current_position.second - 1] != 0 && 
+		if ((reachable_in_time[current_position.first][current_position.second - 1] != 0 || std::make_pair(current_position.first, current_position.second - 1) == goal) && 
 			abs((int)reachable_in_time[goal.first][goal.second] - (int)reachable_in_time[current_position.first][current_position.second - 1]) <= remaining_steps - 1 &&
 			!IsInVector(visited[current_position.first][current_position.second - 1], remaining_steps - 1)) {
-			priority_queue.push_back(std::make_pair(current_position.first, current_position.second - 1));
+
+			std::vector<size_t> used_in_times_vec = used_number_of_vertex[current_position.first][current_position.second - 1];
+			size_t used_times = std::count(used_in_times_vec.begin(), used_in_times_vec.end(), remaining_steps - 1);
+
+			if (IsSwapping(remaining_steps, current_position, std::make_pair(current_position.first, current_position.second - 1), used_number_of_vertex, next_vertex) || used_times > 0) {
+				conflict_priority_queue.push_back(std::make_pair(current_position.first, current_position.second - 1));
+			}
+			else {
+				priority_queue.push_back(std::make_pair(current_position.first, current_position.second - 1));
+			}
+		}
+
+		//stand still
+		if ((reachable_in_time[current_position.first][current_position.second] != 0 || std::make_pair(current_position.first, current_position.second) == goal) && 
+			abs((int)reachable_in_time[goal.first][goal.second] - (int)reachable_in_time[current_position.first][current_position.second]) <= remaining_steps - 1 &&
+			!IsInVector(visited[current_position.first][current_position.second], remaining_steps - 1)) {
+
+			std::vector<size_t> used_in_times_vec = used_number_of_vertex[current_position.first][current_position.second];
+			size_t used_times = std::count(used_in_times_vec.begin(), used_in_times_vec.end(), remaining_steps - 1);
+			if (used_times > 0) {
+				conflict_priority_queue.push_back(std::make_pair(current_position.first, current_position.second));
+			}
+			else {
+				priority_queue.push_back(std::make_pair(current_position.first, current_position.second));
+			}
 		}
 
 		std::sort(priority_queue.begin(), priority_queue.end(), comparator);
+		std::sort(conflict_priority_queue.begin(), conflict_priority_queue.end(), conflict_comparator);
 	}
 
 	while (!priority_queue.empty()) {
 		std::pair<size_t, size_t> next_position = priority_queue.back();
 		priority_queue.pop_back();
 
-		bool found = compute_path_recursive(reachable_in_time, used_number_of_vertex, visited, next_position, goal, remaining_steps - 1, final_path);
+		bool found = compute_path_recursive(reachable_in_time, used_number_of_vertex, next_vertex, visited, next_position, goal, remaining_steps - 1, remaining_conflicts, final_path);
 
 		//reconstruction of the path
 		if (found) {
 			final_path.push_back(current_position);
 
 			used_number_of_vertex[current_position.first][current_position.second].push_back(remaining_steps);
+			next_vertex[current_position.first][current_position.second].push_back(next_position);
 
 			return true;
+		}
+	}
+
+	if (remaining_conflicts > 0) {
+		while (!conflict_priority_queue.empty()) {
+			std::pair<size_t, size_t> next_conflict_position = conflict_priority_queue.back();
+			conflict_priority_queue.pop_back();
+
+			bool found = compute_path_recursive(reachable_in_time, used_number_of_vertex, next_vertex, visited, next_conflict_position, goal, remaining_steps - 1, remaining_conflicts - 1, final_path);
+
+			//reconstruction of the path
+			if (found) {
+				final_path.push_back(current_position);
+
+				used_number_of_vertex[current_position.first][current_position.second].push_back(remaining_steps);
+				next_vertex[current_position.first][current_position.second].push_back(next_conflict_position);
+
+				return true;
+			}
 		}
 	}
 
@@ -687,7 +822,7 @@ bool compute_path_recursive(
 * @param agents vector of pairs containig agents start and finish coordinates in pair.
 * @return error message, "OK" if everything ended right.
 */
-std::string RecursivePaths::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents) {
+std::string RecursivePaths::compute_shortest_paths(std::vector<std::vector<size_t>>& reference_map, std::vector<std::vector<std::pair<size_t, size_t>>>& output_paths, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t makespan) {
 	if (output_paths.size() != agents.size()) {
 		return "ERROR: different lenghts of paths and agents\n";
 	}
@@ -699,10 +834,11 @@ std::string RecursivePaths::compute_shortest_paths(std::vector<std::vector<size_
 	std::vector<std::pair<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>, std::vector<std::vector<size_t>>>> reachable_in_time;
 
 	std::vector<std::vector<std::vector<size_t>>> used_number_of_vertex(reference_map.size(), std::vector<std::vector<size_t>>(reference_map[0].size()));
+	std::vector<std::vector<std::vector<std::pair<size_t, size_t>>>> next_vertex(reference_map.size(), std::vector<std::vector<std::pair<size_t, size_t>>>(reference_map[0].size()));
 
 	//Compute vertex reachable time for all agents
 	for (size_t i = 0; i < agents.size(); i++) {
-		reachable_in_time.push_back(std::make_pair(agents[i], time_expanded_graph(reference_map, agents[i].first)));
+		reachable_in_time.push_back(std::make_pair(agents[i], compute_time_expanded_graph(reference_map, agents[i].first)));
 	}
 
 	//Sort agents by their shortest path length
@@ -719,18 +855,24 @@ std::string RecursivePaths::compute_shortest_paths(std::vector<std::vector<size_
 	//Compute paths for all agents
 	for (size_t i = 0; i < reachable_in_time.size(); i++) {
 
-		//Compute distance of each vertex from start
-		std::vector<std::vector<std::vector<size_t>>> visited(reference_map.size(), std::vector<std::vector<size_t>>(reference_map[0].size()));
+		bool found = false;
 
-		bool found = compute_path_recursive(
-			reachable_in_time[i].second, 
-			used_number_of_vertex, 
-			visited, 
-			reachable_in_time[i].first.first, 
-			reachable_in_time[i].first.second,
-			reachable_in_time[i].second[reachable_in_time[i].first.second.first][reachable_in_time[i].first.second.second],
-			output_paths[i]
-		);
+		for (size_t allowed_conflicts = 0; !found && allowed_conflicts <= makespan; allowed_conflicts++) {
+
+			std::vector<std::vector<std::vector<size_t>>> visited(reference_map.size(), std::vector<std::vector<size_t>>(reference_map[0].size()));
+
+			found = compute_path_recursive(
+				reachable_in_time[i].second, 
+				used_number_of_vertex,
+				next_vertex, 
+				visited, 
+				reachable_in_time[i].first.first, 
+				reachable_in_time[i].first.second,
+				makespan + 1,
+				allowed_conflicts, 
+				output_paths[i]
+			);
+		}
 
 		if (!found) {
 			return "ERROR: some agents can't get to finish";

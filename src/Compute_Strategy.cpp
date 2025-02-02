@@ -90,13 +90,13 @@ std::string Baseline::run_tests(size_t time_limit) {
 					return err;
 				}
 
-				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents);
+				LB = mapa.get_min_time();
+
+				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents, LB + bonus_makespan);
 				if (err != "OK") {
 					std::cout << err << std::endl;
 					return err;
 				}
-
-				LB = mapa.get_min_time();
 
 				auto shortest_paths_time_end = std::chrono::high_resolution_clock::now();
 				preprocess_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(shortest_paths_time_end - started).count();
@@ -106,14 +106,37 @@ std::string Baseline::run_tests(size_t time_limit) {
 				bonus_makespan++;
 			}
 
+			bool finded_solution_in_preprocessing = mapa.are_paths_distinct();
+
 			auto time_mark = std::chrono::high_resolution_clock::now();
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/B_" + path_finder->get_name() + "_log.txt", "B_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			if (finded_solution_in_preprocessing) {
+				result = "OK";
 
-			auto solver_time_end = std::chrono::high_resolution_clock::now();
-			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+				std::string base_map_name = mapa.map_file_name.substr(mapa.map_file_name.find_last_of("/") + 1);
+				std::string base_agents_name = mapa.agents_file_name.substr(mapa.agents_file_name.find_last_of("/") + 1);
+				std::string log_file = output_dir_path + "/B_" + path_finder->get_name() + "_log.txt";
+				std::string alg = "B_" + path_finder->get_name();
+
+				std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(mapa.original_number_of_vertices) + "\t" + std::to_string(number_of_agents_to_compute) + "\t" + std::to_string(LB + bonus_makespan) + "\t";
+				std::cout << alg + "\t" << out << "OK Preprocess" << std::endl;
+				std::cout.flush();
+
+				std::ofstream ofile;
+				ofile.open(log_file, std::ios::app);
+				if (ofile.is_open()) {
+					ofile << out << "OK Preprocess" << std::endl;
+				}
+				ofile.close();
+			}
+			else {
+				result = mapa.kissat(output_dir_path + "/B_" + path_finder->get_name() + "_log.txt", "B_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+
+				auto solver_time_end = std::chrono::high_resolution_clock::now();
+				solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+			}
 			
 			if (result == "OK") {
 
@@ -203,12 +226,14 @@ std::string MakespanAdd::run_tests(size_t time_limit) {
 					return err;
 				}
 
-				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents);
+				LB = mapa.get_min_time();
+
+				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents, LB + bonus_makespan);
 				if (err != "OK") {
 					std::cout << err << std::endl;
 					return err;
 				}
-				LB = mapa.get_min_time();
+				
 				auto [reduced, reduced_number_of_vertices, reduced_map] = cut_unreachable(mapa.map, mapa.agents, LB);
 
 				mapa.reset_computed_map();
@@ -244,14 +269,37 @@ std::string MakespanAdd::run_tests(size_t time_limit) {
 				preprocess_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(bonus_makespan_time_end - bonus_makespan_time_start).count();
 			}
 
+			bool finded_solution_in_preprocessing = mapa.are_paths_distinct();
+
 			auto time_mark = std::chrono::high_resolution_clock::now();
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/M_" + path_finder->get_name() + "_log.txt", "M_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			if (finded_solution_in_preprocessing) {
+				result = "OK";
 
-			auto solver_time_end = std::chrono::high_resolution_clock::now();
-			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+				std::string base_map_name = mapa.map_file_name.substr(mapa.map_file_name.find_last_of("/") + 1);
+				std::string base_agents_name = mapa.agents_file_name.substr(mapa.agents_file_name.find_last_of("/") + 1);
+				std::string log_file = output_dir_path + "/M_" + path_finder->get_name() + "_log.txt";
+				std::string alg = "M_" + path_finder->get_name();
+
+				std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(mapa.original_number_of_vertices) + "\t" + std::to_string(number_of_agents_to_compute) + "\t" + std::to_string(LB + bonus_makespan) + "\t";
+				std::cout << alg + "\t" << out << "OK Preprocess" << std::endl;
+				std::cout.flush();
+
+				std::ofstream ofile;
+				ofile.open(log_file, std::ios::app);
+				if (ofile.is_open()) {
+					ofile << out << "OK Preprocess" << std::endl;
+				}
+				ofile.close();
+			}
+			else {
+				result = mapa.kissat(output_dir_path + "/M_" + path_finder->get_name() + "_log.txt", "M_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+
+				auto solver_time_end = std::chrono::high_resolution_clock::now();
+				solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+			}
 			
 			if (result == "OK") {
 
@@ -346,12 +394,14 @@ std::string PruningCut::run_tests(size_t time_limit) {
 					return err;
 				}
 
-				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents);
+				LB = mapa.get_min_time();
+
+				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents, LB + bonus_makespan);
 				if (err != "OK") {
 					std::cout << err << std::endl;
 					return err;
 				}
-				LB = mapa.get_min_time();
+				
 				auto [reduced, reduced_number_of_vertices, red_map] = cut_unreachable(mapa.map, mapa.agents, LB);
 				reduced_map = red_map;
 
@@ -404,14 +454,37 @@ std::string PruningCut::run_tests(size_t time_limit) {
 				}
 			}
 
+			bool finded_solution_in_preprocessing = mapa.are_paths_distinct();
+
 			auto time_mark = std::chrono::high_resolution_clock::now();
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/P_" + path_finder->get_name() + "_log.txt", "P_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			if (finded_solution_in_preprocessing) {
+				result = "OK";
 
-			auto solver_time_end = std::chrono::high_resolution_clock::now();
-			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+				std::string base_map_name = mapa.map_file_name.substr(mapa.map_file_name.find_last_of("/") + 1);
+				std::string base_agents_name = mapa.agents_file_name.substr(mapa.agents_file_name.find_last_of("/") + 1);
+				std::string log_file = output_dir_path + "/P_" + path_finder->get_name() + "_log.txt";
+				std::string alg = "P_" + path_finder->get_name();
+
+				std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(mapa.original_number_of_vertices) + "\t" + std::to_string(number_of_agents_to_compute) + "\t" + std::to_string(LB + bonus_makespan) + "\t";
+				std::cout << alg + "\t" << out << "OK Preprocess" << std::endl;
+				std::cout.flush();
+
+				std::ofstream ofile;
+				ofile.open(log_file, std::ios::app);
+				if (ofile.is_open()) {
+					ofile << out << "OK Preprocess" << std::endl;
+				}
+				ofile.close();
+			}
+			else {
+				result = mapa.kissat(output_dir_path + "/P_" + path_finder->get_name() + "_log.txt", "P_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+
+				auto solver_time_end = std::chrono::high_resolution_clock::now();
+				solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+			}
 			
 			if (result == "OK") {
 
@@ -501,7 +574,9 @@ std::string Combined::run_tests(size_t time_limit) {
 					return err;
 				}
 
-				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents);
+				LB = mapa.get_min_time();
+
+				err = path_finder->compute_shortest_paths(mapa.map, mapa.agents_shortest_paths, mapa.agents, LB + bonus_makespan);
 				if (err != "OK") {
 					std::cout << err << std::endl;
 					return err;
@@ -510,8 +585,6 @@ std::string Combined::run_tests(size_t time_limit) {
 				paths_to_map(mapa.agents_shortest_paths, mapa.expanded_map);
 
 				current_usend_number_of_vertices = give_new_numbering(mapa.expanded_map);
-
-				LB = mapa.get_min_time();
 
 				auto shortest_paths_time_end = std::chrono::high_resolution_clock::now();
 				preprocess_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(shortest_paths_time_end - started).count();
@@ -533,14 +606,37 @@ std::string Combined::run_tests(size_t time_limit) {
 				preprocess_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(bonus_makespan_time_end - bonus_makespan_time_start).count();
 			}
 
+			bool finded_solution_in_preprocessing = mapa.are_paths_distinct();
+
 			auto time_mark = std::chrono::high_resolution_clock::now();
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			result = mapa.kissat(output_dir_path + "/C_" + path_finder->get_name() + "_log.txt", "C_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+			if (finded_solution_in_preprocessing) {
+				result = "OK";
 
-			auto solver_time_end = std::chrono::high_resolution_clock::now();
-			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+				std::string base_map_name = mapa.map_file_name.substr(mapa.map_file_name.find_last_of("/") + 1);
+				std::string base_agents_name = mapa.agents_file_name.substr(mapa.agents_file_name.find_last_of("/") + 1);
+				std::string log_file = output_dir_path + "/C_" + path_finder->get_name() + "_log.txt";
+				std::string alg = "C_" + path_finder->get_name();
+
+				std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(mapa.original_number_of_vertices) + "\t" + std::to_string(number_of_agents_to_compute) + "\t" + std::to_string(LB + bonus_makespan) + "\t";
+				std::cout << alg + "\t" << out << "OK Preprocess" << std::endl;
+				std::cout.flush();
+
+				std::ofstream ofile;
+				ofile.open(log_file, std::ios::app);
+				if (ofile.is_open()) {
+					ofile << out << "OK Preprocess" << std::endl;
+				}
+				ofile.close();
+			}
+			else {
+				result = mapa.kissat(output_dir_path + "/C_" + path_finder->get_name() + "_log.txt", "C_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
+
+				auto solver_time_end = std::chrono::high_resolution_clock::now();
+				solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
+			}
 			
 			if (result == "OK") {
 

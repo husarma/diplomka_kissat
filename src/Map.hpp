@@ -3,8 +3,6 @@
 #include "Debug.hpp"
 #include "Algorithms.hpp"
 
-#include "MAPF.hpp"
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,12 +10,9 @@
 #include <vector>
 #include <tuple>
 
-class OutputterStrategyI;
-
 /** Class that holds information about map and agents.
 *
-* Delegating input generating for Picat to OutputterStrategyI.
-* Calls picat for computing.
+* Calls kissat for computing.
 */
 class Map {
 public:
@@ -52,6 +47,8 @@ public:
     std::string load_map(std::string custom_map_file_name = "");
     std::string load_agents(int number_of_agents = -1, std::string custom_agents_file_name = "");
     std::string reload(int number_of_agents = -1);
+
+    bool are_paths_distinct();
 
     std::string kissat(std::string log_file, std::string alg, size_t lower_bound, size_t bonus_makespan, size_t time_limit_ms);
 
