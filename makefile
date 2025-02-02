@@ -14,7 +14,7 @@ DEPS = $(patsubst %,$(S_DIR)/%,$(_DEPS))
 _OBJ_MAIN = main.o Algorithms.o Compute_Strategy.o Debug.o Map.o Path_finder_Strategy.o
 OBJ_MAIN = $(patsubst %,$(B_DIR)/%,$(_OBJ_MAIN))
 
-_OBJ_SOLVER = solver.o Map.o
+_OBJ_SOLVER = solver.o Map.o Algorithms.o
 OBJ_SOLVER  = $(patsubst %,$(B_DIR)/%,$(_OBJ_SOLVER))
 
 all: $(PROJECT_NAME) $(SOLVER)
