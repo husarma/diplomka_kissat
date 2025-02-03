@@ -868,7 +868,7 @@ std::string RecursivePaths::compute_shortest_paths(std::vector<std::vector<size_
 				visited, 
 				reachable_in_time[i].first.first, 
 				reachable_in_time[i].first.second,
-				makespan + 1,
+				makespan,
 				allowed_conflicts, 
 				output_paths[i]
 			);

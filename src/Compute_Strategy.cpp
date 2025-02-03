@@ -106,37 +106,14 @@ std::string Baseline::run_tests(size_t time_limit) {
 				bonus_makespan++;
 			}
 
-			bool finded_solution_in_preprocessing = mapa.are_paths_distinct();
-
 			auto time_mark = std::chrono::high_resolution_clock::now();
 			auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_mark - started).count();
 
 			// Start solver
-			if (finded_solution_in_preprocessing) {
-				result = "OK";
+			result = mapa.kissat(output_dir_path + "/B_" + path_finder->get_name() + "_log.txt", "B_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
 
-				std::string base_map_name = mapa.map_file_name.substr(mapa.map_file_name.find_last_of("/") + 1);
-				std::string base_agents_name = mapa.agents_file_name.substr(mapa.agents_file_name.find_last_of("/") + 1);
-				std::string log_file = output_dir_path + "/B_" + path_finder->get_name() + "_log.txt";
-				std::string alg = "B_" + path_finder->get_name();
-
-				std::string out = base_map_name + "\t" + base_agents_name + "\t" + std::to_string(mapa.original_number_of_vertices) + "\t" + std::to_string(number_of_agents_to_compute) + "\t" + std::to_string(LB + bonus_makespan) + "\t";
-				std::cout << alg + "\t" << out << "OK Preprocess" << std::endl;
-				std::cout.flush();
-
-				std::ofstream ofile;
-				ofile.open(log_file, std::ios::app);
-				if (ofile.is_open()) {
-					ofile << out << "OK Preprocess" << std::endl;
-				}
-				ofile.close();
-			}
-			else {
-				result = mapa.kissat(output_dir_path + "/B_" + path_finder->get_name() + "_log.txt", "B_" + path_finder->get_name(), LB, bonus_makespan, std::max((long long)1000, (long long)time_limit - elapsed_ms));
-
-				auto solver_time_end = std::chrono::high_resolution_clock::now();
-				solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
-			}
+			auto solver_time_end = std::chrono::high_resolution_clock::now();
+			solver_time_total += std::chrono::duration_cast<std::chrono::milliseconds>(solver_time_end - time_mark).count();
 			
 			if (result == "OK") {
 
