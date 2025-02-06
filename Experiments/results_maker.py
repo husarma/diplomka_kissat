@@ -149,7 +149,7 @@ def main(args: argparse.Namespace):
     path_finder_names = ["Biaset", "Random", "WithoutCrossing", "WithoutCrossingAtSameTimes", "RecursivePaths"]
     path_finder_names_short = ["Bia", "Ran", "WCr", "XCr", "Rec"]
     path_finder_formats = [Biaset_format, Random_format, WCross_format, XCross_format, Rec_format]
-    common_alg_subheader_data = ["V", "S-mks", "P-time-ms", "S-time-ms", "SO"]
+    common_alg_subheader_data = ["V", "S-mks", "P-time-ms", "S-time-ms", "T-time-ms", "SO"]
     common_map_information = ["map_name", "size", "Scenario", "Agents", "LB", "OS"]
 
     common_info_and_baseline_header_offset = len(common_map_information) + len(common_alg_subheader_data)
@@ -237,7 +237,7 @@ def main(args: argparse.Namespace):
 
 
     # Printing data to result sheet.
-    printable_data_indexes = [4, 7, 8, 10]
+    printable_data_indexes = [4, 7, 8, 9, 10]
     row = 3
     for map in maps_and_scenarios:
         for scenario in maps_and_scenarios[map]:
