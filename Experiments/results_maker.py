@@ -17,7 +17,8 @@ def main(args: argparse.Namespace):
     ############################################### Workbook creation ###############################################
 
     # Create a workbook and add a worksheet.
-    workbook = xlsxwriter.Workbook('Results.xlsx')
+    
+    workbook = xlsxwriter.Workbook(ntpath.basename(args.data_path) + '-Results.xlsx')
     results_sheet = workbook.add_worksheet("Results")
 
     ################################################ Header creation ################################################
