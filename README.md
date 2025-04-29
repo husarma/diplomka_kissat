@@ -25,3 +25,5 @@ Example of generating `Tests-Results.xlsx` results file `python Experiments/resu
 Be aware of high memory requirements for large maps or high agents count.
 
 Big thanks to https://github.com/svancaj/MAPF-encodings for MAPF solving library based on kissat SAT solver. (`MAPF.hpp`, `libmapf.a`)
+
+For the tasks management and execution the [BS-thread-pool](https://github.com/bshoshany/thread-pool) library was used.
