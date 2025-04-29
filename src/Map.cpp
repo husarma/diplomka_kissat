@@ -206,6 +206,12 @@ std::string Map::reload(int number_of_agents) {
 	}
 }
 
+/** Determines if the agents paths are valid solution to the MAPF.
+*
+* Determines from Map::agents_shortest_paths.
+*
+* @return true if agents paths are valid solution to the MAPF.
+*/
 bool Map::are_paths_distinct() {
 	//start position is alwais valid -> satisfied with pathfinding
 
@@ -253,6 +259,15 @@ bool Map::are_paths_distinct() {
 	return true;
 }
 
+/** Calls solver to solve the currently stored instance.
+*
+* @param log_file log file name.
+* @param alg algorithm name.
+* @param lower_bound solution lower bound.
+* @param bonus_makespan bonus allowed makepsan from lower bound.
+* @param time_limit_ms solving time limit in ms.
+* @return solution result.
+*/
 std::string Map::kissat(std::string log_file, std::string alg, size_t lower_bound, size_t bonus_makespan, size_t time_limit_ms) {
 
 	std::filesystem::create_directory("temp");

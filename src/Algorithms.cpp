@@ -100,6 +100,7 @@ std::pair<std::string, bool> expand_map(std::vector<std::vector<size_t>>& refere
 /** Gives new appropriete number to each vertex.
 *
 * @param map_to_renumber map to be renumbered.
+* @return number of vertices on the graph.
 */
 size_t give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 
@@ -116,6 +117,12 @@ size_t give_new_numbering(std::vector<std::vector<size_t>>& map_to_renumber) {
 	return vertex_number - 1;
 }
 
+/** Computes the reachibility graph from egent's position.
+*
+* @param input_map map for which the TEG is computed.
+* @param agent agents position from which the TEG is computed.
+* @return reachibility graph from egent's position.
+*/
 std::vector<std::vector<size_t>> compute_time_expanded_graph(std::vector<std::vector<size_t>>& input_map, std::pair<size_t, size_t> agent) {
 
 	std::vector<std::vector<size_t>> temp_map(input_map.size(), std::vector<size_t>(input_map[0].size(), 0));
@@ -162,6 +169,13 @@ std::vector<std::vector<size_t>> compute_time_expanded_graph(std::vector<std::ve
 	return temp_map;
 }
 
+/** Computes the Time expanded graph from egent's starting to the goal position for given timelimit.
+*
+* @param input_map map for which the TEG is computed.
+* @param agent agents position from which the TEG is computed.
+* @param time TEG timelimit.
+* @return set of reachable vertices based of TEG.
+*/
 std::set<size_t> find_used_vertices(std::vector<std::vector<size_t>>& input_map, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t time) {
 
 	std::set<size_t> used_vertices;
@@ -185,6 +199,13 @@ std::set<size_t> find_used_vertices(std::vector<std::vector<size_t>>& input_map,
 	return used_vertices;
 }
 
+/** Cutes the unreachable vertices based on the all agents Time expanded graph combined.
+*
+* @param map_to_cut map for which the vertices will be cutted.
+* @param agents agents starting and goal positions.
+* @param time agents timelimit for mooving on the graph.
+* @return bool if some vertices were cutted from the map, number of vertices left, cutted map.
+*/
 std::tuple<bool, size_t, std::vector<std::vector<size_t>>> cut_unreachable(std::vector<std::vector<size_t>>& map_to_cut, std::vector<std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>>>& agents, size_t time) {
 
 	std::vector<std::vector<size_t>> map_output = map_to_cut;

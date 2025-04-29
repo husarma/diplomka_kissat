@@ -5,7 +5,7 @@
 
 /** Computes the shortest paths in graph for agents.
 *
-* Uses BFS algorithm with basic reconstruction of finded path.
+* For its bias uses BFS algorithm with basic reconstruction of finded path.
 *
 * @param reference_map original input map.
 * @param output_paths vector for writing the result for agents.
@@ -229,6 +229,7 @@ std::string TrullyRandom::get_name() {
 	return "Random";
 }
 
+/** WCR heuristic comparison class. */
 class CompareWithoutCrossing {
 public:
 	std::pair<size_t, size_t> finish;
@@ -280,7 +281,7 @@ public:
 
 /** Computes the shortest paths in graph for agents.
 *
-* Uses A* algorithm.
+* Uses A* algorithm with WCR heuristic.
 *
 * @param reference_map original input map.
 * @param output_paths vector for writing the result for agents.
@@ -417,7 +418,7 @@ std::string WithoutCrossing::get_name() {
 
 /** Computes the shortest paths in graph for agents.
 *
-* Uses A* algorithm.
+* Uses A* algorithm with XCR heuristic (Cleverly uses WCR as XCR).
 *
 * @param reference_map original input map.
 * @param output_paths vector for writing the result for agents.
@@ -561,6 +562,7 @@ std::string WithoutCrossingAtSameTimes::get_name() {
 	return "WithoutCrossingAtSameTimes";
 }
 
+/** Manhattan distance heuristic comparison class. */
 class CompareWithoutCrossingR {
 public:
 	std::pair<size_t, size_t> finish;
@@ -589,6 +591,7 @@ public:
 	}
 };
 
+/** Manhattan distance heuristic with conflicts comparison class. */
 class CompareWithoutCrossingRConflict {
 public:
 	std::pair<size_t, size_t> finish;
@@ -648,6 +651,15 @@ bool IsInVector(std::vector<T>& vec, T to_find) {
 	return false;
 }
 
+/** Detects swapping conflicts for agent.
+*
+* @param current_time current timestep.
+* @param current_position current agent position.
+* @param next_position next agent position.
+* @param used_number_of_vertex information about timesteps when the vertices are used.
+* @param next_vertex information about next vertex used from the current vertex (Information about ussage of edges).
+* @return true if swapping conflict would occur.
+*/
 bool IsSwapping(
 	size_t current_time, 
 	std::pair<size_t, size_t> current_position, 
@@ -667,6 +679,19 @@ bool IsSwapping(
 	return false;
 }
 
+/** Recursive path search.
+*
+* @param reachable_in_time shortest time in witch each vertex can be visited by an agent.
+* @param used_number_of_vertex tracks how many times a vertex is occupied in given time.
+* @param next_vertex tracks how many times an edge is occupied in given time.
+* @param visited tracks if the vertex vas already visited in given time.
+* @param current_position current position.
+* @param goal desired goal position.
+* @param remaining_steps number of time steps left to stand on goal position.
+* @param remaining_conflicts number of allowed conflicts left on the path.
+* @param final_path agent final path (computed during recursion).
+* @return true if goal was reached with 0 steps left.
+*/
 bool compute_path_recursive(
 	std::vector<std::vector<size_t>>& reachable_in_time,
 	std::vector<std::vector<std::vector<size_t>>>& used_number_of_vertex,
@@ -815,7 +840,7 @@ bool compute_path_recursive(
 
 /** Computes the shortest paths in graph for agents.
 *
-* ...
+* Uses RPS algorithm.
 *
 * @param reference_map original input map.
 * @param output_paths vector for writing the result for agents.
